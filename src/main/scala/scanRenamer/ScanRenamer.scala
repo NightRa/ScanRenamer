@@ -11,6 +11,7 @@ import scalaz.std.anyVal.unitInstance
 import atto._, Atto._
 import java.io.File
 import scalaz.effect.IO
+import scala.util.Try
 
 case class LessonNumber(lesson: Int, page: Int)
 
@@ -21,7 +22,9 @@ object LessonNumber {
 
 object Parsing {
   def imageNumber(name: String): Option[Int] =
-    (string("Image (") ~> int <~ string(").jpg")).parse(name).option
+    Try(name.dropWhile(!_.isDigit).takeWhile(_.isDigit).toInt).toOption
+  //  many(many(elem(!_.isDigit)) ~> int).parseOnly(""""Algebra0021.jpg", "Data Structures0001.jpg", "Image (1354).jpg"""")
+  //    (string("Image (") ~> int <~ string(").jpg")).parse(name).option
 
   def lessonNumber(lesson: String): Option[LessonNumber] =
     (for {
@@ -32,8 +35,8 @@ object Parsing {
 
 object ScanRenamer {
   def rawOrLesson(name: String): Option[Int \/ LessonNumber] = (Parsing.imageNumber(name), Parsing.lessonNumber(name)) match {
-    case (Some(raw), _) => Some(-\/(raw))
     case (_, Some(lesson)) => Some(\/-(lesson))
+    case (Some(raw), _) => Some(-\/(raw))
     case _ => None
   }
 
@@ -83,6 +86,11 @@ object ScanRenamer {
 }
 
 object Main extends App {
+//  println(Parsing.imageNumber("Algebra0022.jpg"))
+//  println(Parsing.imageNumber("Data Structures0005.jpg"))
+//  println(Parsing.imageNumber("Image (1330)"))
+//  println(ScanRenamer.rawOrLesson("Data Structures0005.jpg"))
+
   println("Please enter the folder to operate on: ")
   val folderString = readLine()
   val folder = new File(folderString)
