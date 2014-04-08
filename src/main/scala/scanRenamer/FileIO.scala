@@ -12,7 +12,7 @@ object FileIO {
     writer.close()
   }
 
-  def readFileLines(file: File): IO[Seq[String]] = IO {
+  def readFileLines(file: File): IO[Stream[String]] = IO {
     Source.fromFile(file).getLines().toStream
   }
 
