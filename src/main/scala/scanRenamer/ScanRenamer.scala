@@ -2,9 +2,10 @@ package scanRenamer
 
 import Parsing.Raw
 import FileIO._
+
 import scalaz._
-import scalaz.syntax.semigroup._
 import scalaz.syntax.foldable._
+import scalaz.effect.IO
 import scalaz.effect.IO._
 import scalaz.std.list._
 import scalaz.std.stream._
@@ -12,7 +13,6 @@ import scalaz.std.anyVal.unitInstance
 
 import atto._, Atto._
 import java.io.File
-import scalaz.effect.IO
 import scala.util.Try
 
 case class LessonNumber(lesson: Int, page: Int)
@@ -52,7 +52,7 @@ object ScanRenamer {
     (rawFiles, lessonFiles)
   }
 
-  def maxLesson(lessons: List[LessonNumber]): Raw = lessons.map(_.lesson).max
+  def maxLesson(lessons: List[LessonNumber]): Option[Raw] = lessons.map(_.lesson).maximum
 
   def liftRawToLesson(raw: List[Raw], lessonNumber: Int): List[LessonNumber] = raw.sorted.zipWithIndex.map {
     case (_, index) => LessonNumber(lessonNumber, index + 1)
@@ -62,10 +62,11 @@ object ScanRenamer {
 
   def renameList(raw: List[(File, Raw)], lessons: List[LessonNumber]): List[(File, File)] = {
     val maximalLesson = maxLesson(lessons)
+    val currentLesson = maximalLesson.map(_ + 1).getOrElse(1)
     val (files, raws) = raw.unzip
     files match {
       case Nil => Nil
-      case sib :: _ => files zip liftRawToLesson(raws, maximalLesson + 1).map(lessonToFileName).map(sibling(sib, _))
+      case sib :: _ => files zip liftRawToLesson(raws, currentLesson).map(lessonToFileName).map(sibling(sib, _))
     }
   }
 
