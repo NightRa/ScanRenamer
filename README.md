@@ -2,8 +2,8 @@ ScanRenamer
 ===========
 
 A quick prototype for a program to make my life easier.
-For each folder (seperated by a newline) in the local file ```"folders.index"```,
 
+For each folder (seperated by a newline) in the local file ```"folders.index"```,  
 In which are there files in 2 formats:
 
 1. {lesson}.{page}.jpg
