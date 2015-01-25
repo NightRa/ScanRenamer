@@ -10,8 +10,9 @@ import scalaz.effect.IO._
 import scalaz.std.list._
 import scalaz.std.stream._
 import scalaz.std.anyVal.unitInstance
+import scalaz.std.anyVal.intInstance
 
-import atto._, Atto._
+import atto._, atto.Atto._
 import java.io.File
 import scala.util.Try
 
@@ -21,9 +22,9 @@ object Parsing {
   type Raw = Int
 
   def imageNumber(name: String): Option[Raw] =
-    Try(name.dropWhile(!_.isDigit).takeWhile(_.isDigit).toInt).toOption
-  /*(many(elem(!_.isDigit)) ~> int).parseOnly(Algebra0021.jpg).option
-  (string("Image (") ~> int <~ string(").jpg")).parse(name).option*/
+    Try(name.dropWhile(!_.isDigit).takeWhile(_.isDigit).toInt).toOption.filter(_ => name.endsWith(".jpg"))
+    // (many(elem(!_.isDigit)) ~> int <~ (many(elem(!_.isDigit)) ~ string(".jpg"))).parseOnly(name).option
+    //(string("Image (") ~> int <~ string(").jpg")).parse(name).option
 
   def lessonNumber(lesson: String): Option[LessonNumber] =
     (for {
