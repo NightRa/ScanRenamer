@@ -1,14 +1,16 @@
 ScanRenamer
 ===========
 
-A quick prototype for a program to make my life easier.  
-It takes a folder, in which are there files in 2 formats:
+A quick prototype for a program to make my life easier.
+
+For each folder (seperated by a newline) in the local file ```"folders.index"```,  
+In which are there files in 2 formats:
 
 1. {lesson}.{page}.jpg
-2. Image ({number}).jpg
+2. .\*{number}.\* (a string containing a number)
 
-And then renames all the second format files,  
-to the first format, with the maximal lesson + 1.
+Renames all the second format files (ordered by the number) to the first format,  
+with the lesson = maximal lesson + 1.
 
-**Note**: It's a quick prototype made in 2.5 hours.  
-Code might be ugly. Don't judge.
+
+**Note**: It's a quick prototype made in 2.5 hours.
